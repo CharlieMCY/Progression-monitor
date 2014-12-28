@@ -19,7 +19,7 @@ class Monitor {
     void set_params(std::string form, int d);
     int evaluate(char event);
     int reset(std::string formula);
-    int rewrite(std::string current);
+    int rewrite(std::string current, char event);
 
 };
 
