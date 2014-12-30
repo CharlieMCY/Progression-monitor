@@ -32,13 +32,14 @@ int PetriNet::run_monitor() {
         filename += ".txt";
         ifstream trace_file(filename.c_str());
         char event;
-        while(trace_file >> event) {
+        while(trace_file >> event && !petri_net.empty()) {
             cout<<event<<endl;
             vector<Monitor*>::iterator it_mon = petri_net.begin();
             while(it_mon != petri_net.end())
             {
-                if(!(*it_mon)->decision) {
+                if((*it_mon)->decision == 0) {
                     int result = (*it_mon)->evaluate(event);
+                    cout<<"Result "<<result<<endl;
                     if(result == -1) {
                         it_mon = petri_net.erase(it_mon);
                         int index = distance(petri_net.begin(), it_mon);
@@ -51,8 +52,9 @@ int PetriNet::run_monitor() {
                 }
             }
         }
-        if(this->evaluate_decision() == -1) {
+        if(evaluate_decision() == -1) {
             final_decision = -1;
+            cout<<"Property violated"<<endl;
             return 1;
         }
         this->reset();
@@ -61,7 +63,7 @@ int PetriNet::run_monitor() {
 }
 
 int PetriNet::evaluate_decision() {
-    if(petri_net.size() == 0)
+    if(petri_net.empty())
         return -1;
     return 0;
 }
@@ -69,6 +71,6 @@ int PetriNet::evaluate_decision() {
 int PetriNet::reset() {
 
     for(int i = 0; i < petri_net.size(); i++) {
-        petri_net[i]->reset(cosafety_props[i]);
+        petri_net[i]->reset();
     }
 }
