@@ -2,12 +2,14 @@
 
 using namespace std;
 
+//Value of progression: -1 -> invalid, 0 -> progressed formula ready, >=1
+//->progression in process
 void Monitor::set_params(string form, int d) {
     if(form == "=f") {
         this->progression = 1;
         this->formula = "";
     } else {
-        this->progression = 0;
+        this->progression = -1;
         this->formula = form;
     }
     this->decision = d;
@@ -15,19 +17,35 @@ void Monitor::set_params(string form, int d) {
 }
 
 int Monitor::evaluate(char event) {
-    if(progression == 0) {
-        int flag = -1, i;
+    if(progression == -1) {
+        int flag = 0, i;
         while(!current_stack.empty()) {
+            cout<<"Rewriting formula: "<<current_stack.top()<<" on event "<<event<<endl;
             i = rewrite(current_stack.top(), event);
             current_stack.pop();
             if(i == 1) {
                 flag = 1;
+            } else if(i == -1) {
+                flag = -1;
             }
-            if(i == 0 && flag != 1) {
+            cout<<" return "<<i<<" flag "<<flag<<endl;
+        }
+        swap(current_stack, next_stack);
+        this->decision = flag;
+        return flag;
+    } else if(progression == 0) {
+        int flag = 1, i;
+        while(!current_stack.empty()) {
+            cout<<"Rewriting formula: "<<current_stack.top()<<" on event "<<event<<endl;
+            i = rewrite(current_stack.top(), event);
+            current_stack.pop();
+            if(i == -1) {
+                flag = -1;
+            } else if(i == 0 && flag != -1) {
                 flag = 0;
             }
+            cout<<" return "<<i<<" flag "<<flag<<endl;
         }
-        cout<<" event "<<event<<" return "<<i<<" flag "<<flag<<endl;
         swap(current_stack, next_stack);
         this->decision = flag;
         return flag;
@@ -66,6 +84,7 @@ int Monitor::progress(char event) {
         }
         next.append(")");
         formula.append(next);
+        cout<<"formula "<<formula<<endl;
         progression++;
     }
     return 0;
@@ -73,7 +92,6 @@ int Monitor::progress(char event) {
 
 // return 0 if unstatisfied otherwise 1
 int Monitor::rewrite(string& current, char event) {
-    cout<<"Rewriting formula: "<<current<<" on event "<<event<<endl;
     stack<char> bracs;
     char op = '\0';
     stack<string> operands;
@@ -103,8 +121,8 @@ int Monitor::rewrite(string& current, char event) {
                       }
                       operands.push(curr);
                       break;
-            default:  string operand(&current[i]); 
-                      operands.push(operand);
+            default: string operand(&current[i]); 
+                     operands.push(operand);
                      i++;
 
         };
@@ -153,8 +171,10 @@ int Monitor::rewrite(string& current, char event) {
         if(rewrite(curr, event) == 1)
             return 1;
         curr = top1.substr(1, top1.length()-2);
-        if(rewrite(curr, event) == 0)
+        cout<<"Checking for "<<curr<<"on event "<<event<<endl;
+        if(rewrite(curr, event) != 0) {
             return -1;
+        }
         top1.append(&op, 1);
         top1 += top2;
         next_stack.push(top1);
@@ -193,7 +213,8 @@ int Monitor::rewrite(string& current, char event) {
                     cout<<"Returning -1"<<endl;
                     return -1;
                 }
-            } else if(str[1] == '('){
+            } else if(str[0] == '('){
+                cout<<"operands: "<<str<<endl;
                 str = str.substr(1, str.length()-2);
                 return rewrite(str, event);
             } else

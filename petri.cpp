@@ -65,6 +65,10 @@ int PetriNet::run_monitor() {
 int PetriNet::evaluate_decision() {
     if(petri_net.empty())
         return -1;
+    for(vector<Monitor*>::iterator it_mon = petri_net.begin(); it_mon != petri_net.end(); it_mon++) {
+        if(((*it_mon)->progression <= 0) && (*it_mon)->decision == 0)
+            return -1;
+    }
     return 0;
 }
 
