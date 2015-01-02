@@ -37,17 +37,23 @@ int PetriNet::run_monitor() {
             vector<Monitor*>::iterator it_mon = petri_net.begin();
             while(it_mon != petri_net.end())
             {
-                if((*it_mon)->decision == 0) {
-                    int result = (*it_mon)->evaluate(event);
-                    cout<<"Result "<<result<<endl;
-                    if(result == -1) {
-                        it_mon = petri_net.erase(it_mon);
-                        int index = distance(petri_net.begin(), it_mon);
-                        cosafety_props.erase(cosafety_props.begin() + index);
-                    } else {
-                        it_mon++;
+                Monitor* current_mon = *it_mon;
+                int erased = 0;
+                while(current_mon != NULL) {
+                    if(current_mon->decision == 0) {
+                        int result = current_mon->evaluate(event);
+                        cout<<"Result "<<result<<endl;
+                        if(result == 1) {
+                            it_mon = petri_net.erase(it_mon);
+                            int index = distance(petri_net.begin(), it_mon);
+                            cosafety_props.erase(cosafety_props.begin() + index);
+                            erased = 1;
+                            break;
+                        }
                     }
-                } else {
+                    current_mon = current_mon->next;
+                }
+                if(erased == 0) {
                     it_mon++;
                 }
             }
@@ -65,16 +71,18 @@ int PetriNet::run_monitor() {
 int PetriNet::evaluate_decision() {
     if(petri_net.empty())
         return -1;
-    for(vector<Monitor*>::iterator it_mon = petri_net.begin(); it_mon != petri_net.end(); it_mon++) {
-        if(((*it_mon)->progression <= 0) && (*it_mon)->decision == 0)
-            return -1;
-    }
-    return 0;
+    //for(vector<Monitor*>::iterator it_mon = petri_net.begin(); it_mon != petri_net.end(); it_mon++) {
+    //    Monitor* current_mon = *it_mon;
+    //    while(current_mon != NULL) {
+    //    if(((*it_mon)->progression <= 0) && (*it_mon)->decision <= 0)
+    //        return 0;
+    //}
+    return -1;
 }
 
 int PetriNet::reset() {
-
     for(int i = 0; i < petri_net.size(); i++) {
         petri_net[i]->reset();
     }
+    return 1;
 }

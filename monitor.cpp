@@ -8,6 +8,7 @@ void Monitor::set_params(string form, int d) {
     if(form == "=f") {
         this->progression = 1;
         this->formula = "";
+        this->next = NULL;
     } else {
         this->progression = -1;
         this->formula = form;
@@ -61,8 +62,14 @@ int Monitor::reset() {
         current_stack.pop();
     }
     current_stack.push(this->formula);
-    if(progression >= 1) {
-        progression = 0;
+    Monitor* current_mon = this;
+    while(current_mon != NULL) {
+        if(current_mon->progression >= 1) {
+            current_mon->progression = 0;
+            current_mon->next = new Monitor();
+            current_mon->next->set_params(formula, 0);
+        }
+        current_mon = current_mon->next;
     }
     return 1;
 }
@@ -90,7 +97,7 @@ int Monitor::progress(char event) {
     return 0;
 }
 
-// return 0 if unstatisfied otherwise 1
+// return 0 if maybe, -1 if unstatisfied otherwise 1
 int Monitor::rewrite(string& current, char event) {
     stack<char> bracs;
     char op = '\0';
@@ -161,7 +168,13 @@ int Monitor::rewrite(string& current, char event) {
         string curr = operands.top();
         operands.pop();
         curr = curr.substr(1, curr.length()-2);
-        return rewrite(curr, event);
+        int ret = rewrite(curr, event);
+        if(ret == 1) {
+            return -1;
+        } else if(ret == -1) {
+            return 1;
+        }
+        return 0;
     } else if(op == 'U') {
         string top2 = operands.top();
         operands.pop();
