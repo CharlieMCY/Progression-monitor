@@ -4,21 +4,31 @@
 #include <map>
 #include <random>
 #include <cmath>
+#include <fstream>
+
+using namespace std;
+
 int main()
 {
-    std::random_device rd;
-    std::mt19937 gen(rd());
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> dis(30, 50);
+    normal_distribution<> d(50,4);
+    int num;
  
     // values near the mean are the most likely
     // standard deviation affects the dispersion of generated values from the mean
-    std::normal_distribution<> d(5,2);
+    for(int i = 1; i <= 1; i++) {
+        int length = dis(gen);
+        string filename("trace");
+        filename += (char)(((int)'0')+i);
+        filename += ".txt";
+        ofstream trace_file(filename.c_str());
+        for(int j = 1; j <= length; j++) {
+            num = round(d(gen));
+            trace_file << num;
+            trace_file << "\n";
+        }
+    }
  
-    std::map<int, int> hist;
-    for(int n=0; n<10000; ++n) {
-        ++hist[std::round(d(gen))];
-    }
-    for(auto p : hist) {
-        std::cout << std::fixed << std::setprecision(1) << std::setw(2)
-                  << p.first << ' ' << std::string(p.second/200, '*') << '\n';
-    }
 }

@@ -95,7 +95,8 @@ int Monitor::reset() {
                 current_mon->current_stack.push(current_mon->antecedent);
                 current_mon->progression = 0;
                 current_mon->next = new Monitor();
-                current_mon->next->set_params(formula, 0);
+                current_mon->next->set_params("=f", 0);
+                break;
             }
             current_mon = current_mon->next;
         }

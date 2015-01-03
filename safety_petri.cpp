@@ -66,6 +66,8 @@ int PetriNet::run_monitor() {
         cout<<"reseting petri"<<endl;
         this->reset();
     }
+    final_decision = 0;
+    cout<<"Property unknown"<<endl;
     return 1;
 }
 
@@ -75,6 +77,7 @@ int PetriNet::evaluate_decision() {
     for(vector<Monitor*>::iterator it_mon = petri_net.begin(); it_mon != petri_net.end(); it_mon++) {
         Monitor* current_mon = *it_mon;
         while(current_mon != NULL) {
+            cout<<"Progression:"<<current_mon->progression<<" decision "<<current_mon->decision<<endl;
             if((current_mon->progression <= 0) && current_mon->decision <= 0)
                 return -1;
             current_mon = current_mon->next;
