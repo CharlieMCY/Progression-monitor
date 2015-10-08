@@ -3,19 +3,30 @@
 #include <string>
 #include <map>
 #include <random>
+#include <cmath>
+#include <fstream>
+
+using namespace std;
+
 int main()
 {
-    std::random_device rd;
-    std::mt19937 gen(rd());
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> dis(20, 25);
+    geometric_distribution<> d; // same as std::negative_binomial_distribution<> d(1, 0.5);
+    int num;
  
-    std::geometric_distribution<> d; // same as std::negative_binomial_distribution<> d(1, 0.5);
+    for(int i = 1; i <= 200; i++) {
+        int length = dis(gen);
+        string filename("trace");
+        filename += to_string(i);
+        filename += ".txt";
+        ofstream trace_file(filename.c_str());
+        for(int j = 1; j <= length; j++) {
+            num = d(gen);
+            trace_file << num;
+            trace_file << "\n";
+        }
+    }
  
-    std::map<int, int> hist;
-    for(int n=0; n<10000; ++n) {
-        ++hist[d(gen)];
-    }
-    for(auto p : hist) {
-        std::cout << p.first <<
-                ' ' << std::string(p.second/100, '*') << '\n';
-    }
 }

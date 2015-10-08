@@ -1,8 +1,8 @@
-a
-a
-c
-a
-a
-c
+bc 
+abc
+cbc
+b
+cbc
+bbc
 
 

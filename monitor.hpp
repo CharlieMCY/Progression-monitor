@@ -19,6 +19,11 @@
 #include <vector>
 #include <iterator>
 
+
+extern int num_monitors;
+extern int num_violations;
+extern int max_length;
+
 class Monitor {
 
  public:
@@ -32,16 +37,18 @@ class Monitor {
     int progression;
     int ant_satisfied;
     int count;
+    int num_monitors;
     std::stack<std::string> current_stack;
     std::stack<std::string> next_stack;
     std::stack<std::string> temp_next_stack;
     Monitor* next;
 
     void set_params(std::string form, int d);
-    int evaluate(char event);
+    int evaluate(std::string event);
+    int equals(Monitor* head);
     int reset();
-    int rewrite(std::string& current, char event);
-    int progress(char event);
+    int rewrite(std::string& current, std::string event);
+    int progress(std::string event);
 
 };
 

@@ -14,6 +14,9 @@
 #include <utility>
 #include <vector>
 #include <iterator>
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <unistd.h>
 #include "monitor.hpp"
 
 // Monitor decisions:
@@ -34,6 +37,7 @@ class PetriNet {
     void read_file();
     int reset();
     int run_monitor();
+    int count_monitors();
 
 };
 

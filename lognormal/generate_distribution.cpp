@@ -4,19 +4,29 @@
 #include <map>
 #include <random>
 #include <cmath>
+#include <fstream>
+
+using namespace std;
+
 int main()
 {
-    std::random_device rd;
-    std::mt19937 gen(rd());
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> dis(30, 50);
+    lognormal_distribution<> d(1.5, 0.25);
+    int num;
  
-    std::lognormal_distribution<> d(1.6, 0.25);
+    for(int i = 1; i <= 200; i++) {
+        int length = dis(gen);
+        string filename("trace");
+        filename += to_string(i);
+        filename += ".txt";
+        ofstream trace_file(filename.c_str());
+        for(int j = 1; j <= length; j++) {
+            num = d(gen);
+            trace_file << num;
+            trace_file << "\n";
+        }
+    }
  
-    std::map<int, int> hist;
-    for(int n=0; n<10000; ++n) {
-        ++hist[std::round(d(gen))];
-    }
-    for(auto p : hist) {
-        std::cout << std::fixed << std::setprecision(1) << std::setw(2)
-                  << p.first << ' ' << std::string(p.second/200, '*') << '\n';
-    }
 }

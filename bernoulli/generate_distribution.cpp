@@ -3,21 +3,32 @@
 #include <string>
 #include <map>
 #include <random>
- 
+#include <cmath>
+#include <fstream>
+
+using namespace std;
+
 int main()
 {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    // give "true" 1/4 of the time
-    // give "false" 3/4 of the time
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> dis(20, 25);
     std::bernoulli_distribution d(0.25);
+    int num;
  
-    std::map<bool, int> hist;
-    for(int n=0; n<10000; ++n) {
-        ++hist[d(gen)];
+    // values near the mean are the most likely
+    // standard deviation affects the dispersion of generated values from the mean
+    for(int i = 1; i <= 200; i++) {
+        int length = dis(gen);
+        string filename("trace");
+        filename += to_string(i);
+        filename += ".txt";
+        ofstream trace_file(filename.c_str());
+        for(int j = 1; j <= length; j++) {
+            num = round(d(gen));
+            trace_file << num;
+            trace_file << "\n";
+        }
     }
-    for(auto p : hist) {
-        std::cout << std::boolalpha << std::setw(5) << p.first
-                  << ' ' << std::string(p.second/500, '*') << '\n';
-    }
+ 
 }

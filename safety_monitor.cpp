@@ -23,11 +23,11 @@ void Monitor::set_params(string form, int d) {
     current_stack.push(this->formula);
 }
 
-int Monitor::evaluate(char event) {
+int Monitor::evaluate(string event) {
     if(progression == -1) {
         int flag = 0, i;
         while(!current_stack.empty()) {
-            cout<<"Rewriting formula: "<<current_stack.top()<<" on event "<<event<<endl;
+            //cout<<"Rewriting formula: "<<current_stack.top()<<" on event "<<event<<endl;
             i = rewrite(current_stack.top(), event);
             current_stack.pop();
             if(i == 1) {
@@ -35,7 +35,7 @@ int Monitor::evaluate(char event) {
             } else if(i == -1) {
                 flag = -1;
             }
-            cout<<" return "<<i<<" flag "<<flag<<endl;
+            //cout<<" return "<<i<<" flag "<<flag<<endl;
         }
         swap(current_stack, next_stack);
         this->decision = flag;
@@ -43,7 +43,9 @@ int Monitor::evaluate(char event) {
     } else if(progression == 0) {
         int flag = 1, i;
         while(!current_stack.empty()) {
-            cout<<"Rewriting formula: "<<current_stack.top()<<" on event "<<event<<endl;
+            //if(ant_satisfied == 0)
+                //cout<<"Checking if antecedent is satisfied"<<endl;
+            //cout<<"Rewriting formula: "<<current_stack.top()<<" on event "<<event<<endl;
             i = rewrite(current_stack.top(), event);
             current_stack.pop();
             if(i == -1) {
@@ -51,18 +53,20 @@ int Monitor::evaluate(char event) {
             } else if(i == 0 && flag != -1) {
                 flag = 0;
             }
-            cout<<" return "<<i<<" flag "<<flag<<endl;
+            //cout<<" return "<<i<<" flag "<<flag<<endl;
         }
         if(ant_satisfied == 0){
             if(flag == 1) {
-                cout<<"Pushing"<<formula<<" and "<<finally<<endl;
+                cout<<"Consequent "<<formula<<" and finally "<<finally<<endl;
                 current_stack.push(formula);
                 current_stack.push(finally);
                 this->decision = 0;
                 ant_satisfied = 1;
                 return 0;
-            } else if(flag == -1) {
+            } else {
                 this->decision = 1;
+                //cout<<"Antecedent not satisfied"<<endl;
+                ant_satisfied = 1;
                 return 1;
             }
         }
@@ -75,6 +79,15 @@ int Monitor::evaluate(char event) {
 
 }
 
+int Monitor::equals(Monitor* head) {
+    while(head != this) {
+        if((head->antecedent).compare(this->antecedent) == 0 && (head->formula).compare(this->formula) == 0 && (head->finally).compare(this->finally) == 0)
+            return 1;
+        head = head->next;
+    }
+    return 0;
+}
+
 int Monitor::reset() {
     if(progression == -1) {
         this->decision = 0;
@@ -83,7 +96,7 @@ int Monitor::reset() {
         }
         this->current_stack.push(this->formula);
     } else {
-        cout<<"Resetting"<<endl;
+        //cout<<"Resetting"<<endl;
         Monitor* current_mon = this;
         while(current_mon != NULL) {
             current_mon->decision = 0;
@@ -91,12 +104,23 @@ int Monitor::reset() {
                 current_mon->current_stack.pop();
             }
             if(current_mon->progression >= 1) {
-                cout<<"Ante "<<antecedent<<endl;
+                if(!current_mon->equals(this)) {
+                    cout<<"Antecedent "<<current_mon->antecedent<<endl;
+                    current_mon->current_stack.push(current_mon->antecedent);
+                    current_mon->progression = 0;
+                    current_mon->next = new Monitor();
+                    (current_mon->next)->set_params("=f", 0);
+                    num_monitors += 1;
+                    //cout<<"Number of monitors created: "<<num_monitors<<endl;
+                    break;
+                } else {
+                    current_mon->set_params("=f", 0);
+                }
+            } else {
+                cout<<"Antecedent "<<current_mon->antecedent<<endl;
                 current_mon->current_stack.push(current_mon->antecedent);
-                current_mon->progression = 0;
-                current_mon->next = new Monitor();
-                current_mon->next->set_params("=f", 0);
-                break;
+                current_mon->ant_satisfied = 0;
+                current_mon->count = 0;
             }
             current_mon = current_mon->next;
         }
@@ -105,50 +129,59 @@ int Monitor::reset() {
 }
 
 // return 0 if progression worked properly
-int Monitor::progress(char event) {
+int Monitor::progress(string event) {
     size_t pos;
     if(count == 0) {
         pos = antecedent.find('x');
         if(pos != string::npos) {
-            antecedent.replace(pos, 1, &event, 1);
+            antecedent.replace(pos, 1, event);
         }
         count++;
     }
     else {
-        string current = consequent;
-        pos = current.find('x');
-        if(pos != string::npos) {
-            current.replace(pos, 1, &event, 1);
-        }
-        if(formula.empty()) {
-            formula.assign(current);
+        if(consequent.compare("T") == 0) {
+            formula.assign("T");
         } else {
-            formula.insert(0, "(");
-            formula.append(")&(");
-            string next = "";
-            for(int i = 1; i <= progression; i++) {
-                next.append("X(");
+            string current = consequent;
+            pos = current.find('x');
+            if(pos != string::npos) {
+                current.replace(pos, 1, event);
             }
-            next.append(current);
-            for(int i = 1; i <= progression; i++) {
+            if(formula.empty()) {
+                formula.assign(current);
+            } else {
+                formula.insert(0, "(");
+                formula.append(")&(");
+                string next = "";
+                //for(int i = 1; i <= progression; i++) {
+                //    next.append("X(");
+                //}
+                next.append(current);
+                //for(int i = 1; i <= progression; i++) {
+                //    next.append(")");
+                //}
                 next.append(")");
+                formula.append(next);
+                //cout<<"formula "<<formula<<endl;
+                progression++;
             }
-            next.append(")");
-            formula.append(next);
-            cout<<"formula "<<formula<<endl;
-            progression++;
         }
     }
     finally = last;
     pos = finally.find('x');
     if(pos != string::npos) {
-        finally.replace(pos, 1, &event, 1);
+        finally.replace(pos, 1, event);
+    }
+    int length = antecedent.length() + formula.length() + finally.length();
+    if(max_length < length) {
+        max_length = length;
     }
     return 0;
 }
 
 // return 0 if maybe, -1 if unstatisfied otherwise 1
-int Monitor::rewrite(string& current, char event) {
+int Monitor::rewrite(string& current, string event) {
+    //cout<<"In function rewrite "<<current<<" , "<<event<<endl;
     stack<char> bracs;
     char op = '\0';
     stack<string> operands;
@@ -178,9 +211,10 @@ int Monitor::rewrite(string& current, char event) {
                       }
                       operands.push(curr);
                       break;
-            default: string operand(&current[i]); 
+            default: string operand = current.substr(i); 
+                     //cout<<"Operand pushed "<<operand<<endl;
                      operands.push(operand);
-                     i++;
+                     i = current.length();
 
         };
     }
@@ -188,14 +222,14 @@ int Monitor::rewrite(string& current, char event) {
         string top = operands.top();
         operands.pop();
         string curr = top.substr(1, top.length()-2);
-        cout<<"next rewrite on "<<curr<<endl;
+        //cout<<"next rewrite on "<<curr<<endl;
         if(rewrite(curr, event) == 1) {
             string next(&op, 1);
             next += top;
             next_stack.push(next);
             return 0;
         }
-        cout<<"Returning -1"<<endl;
+        //cout<<"Returning -1"<<endl;
         return -1;
     } else if(op == 'F') {
         string top = operands.top();
@@ -207,6 +241,7 @@ int Monitor::rewrite(string& current, char event) {
             next_stack.push(next);
             return 0;
         }
+        //cout<<"Evaluating "<<top<<" on event "<<event<<"return ing 1"<<endl;
         return 1;
     } else if(op == 'X') {
         string next = operands.top();
@@ -234,7 +269,7 @@ int Monitor::rewrite(string& current, char event) {
         if(rewrite(curr, event) == 1)
             return 1;
         curr = top1.substr(1, top1.length()-2);
-        cout<<"Checking for "<<curr<<"on event "<<event<<endl;
+        //cout<<"Checking for "<<curr<<"on event "<<event<<endl;
         if(rewrite(curr, event) != 0) {
             return -1;
         }
@@ -267,21 +302,22 @@ int Monitor::rewrite(string& current, char event) {
             return -1;
         return 0;
     } else {
+        //cout<<"Operand "<<operands.top()<<" event "<<event<<endl;
         if(operands.size() == 1) {
             string str = operands.top();
-            if(str.length() == 1) {
-                if (*(str.c_str()) == event || *(str.c_str()) == 'T')
-                    return 1;
-                else {
-                    cout<<"Returning -1"<<endl;
-                    return -1;
-                }
-            } else if(str[0] == '('){
-                cout<<"operands: "<<str<<endl;
+            if(str[0] == '('){
+                //cout<<"operands: "<<str<<endl;
                 str = str.substr(1, str.length()-2);
                 return rewrite(str, event);
-            } else
-                return rewrite(str, event);
+            } else {
+                //cout<<"Comparing "<<str<<" with "<<event<<endl;
+                if (str.compare(event) == 0 || str.compare("T") == 0)
+                    return 1;
+                else {
+                    //cout<<"Returning -1"<<endl;
+                    return -1;
+                }
+            }
         }
     }
 

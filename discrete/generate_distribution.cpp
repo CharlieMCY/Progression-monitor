@@ -1,17 +1,32 @@
 #include <iostream>
+#include <iomanip>
+#include <string>
 #include <map>
 #include <random>
- 
+#include <cmath>
+#include <fstream>
+
+using namespace std;
+
 int main()
 {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::discrete_distribution<> d({40, 10, 10, 40});
-    std::map<int, int> m;
-    for(int n=0; n<10000; ++n) {
-        ++m[d(gen)];
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> dis(20, 25);
+    discrete_distribution<> d({40, 10, 10, 40});
+    int num;
+ 
+    for(int i = 1; i <= 200; i++) {
+        int length = dis(gen);
+        string filename("trace");
+        filename += to_string(i);
+        filename += ".txt";
+        ofstream trace_file(filename.c_str());
+        for(int j = 1; j <= length; j++) {
+            num = d(gen);
+            trace_file << num;
+            trace_file << "\n";
+        }
     }
-    for(auto p : m) {
-        std::cout << p.first << " generated " << p.second << " times\n";
-    }
+ 
 }

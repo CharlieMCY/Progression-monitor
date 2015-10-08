@@ -3,21 +3,30 @@
 #include <string>
 #include <map>
 #include <random>
- 
+#include <cmath>
+#include <fstream>
+
+using namespace std;
+
 int main()
 {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    // Pat goes door-to-door selling cookies
-    // At each house, there's a 75% chance that she sells one box
-    // how many times will she be turned away before selling 5 boxes?
-    std::negative_binomial_distribution<> d(5, 0.75);
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> dis(20, 25);
+    negative_binomial_distribution<> d(15, 0.9);
+    int num;
  
-    std::map<int, int> hist;
-    for(int n=0; n<10000; ++n) {
-        ++hist[d(gen)];
+    for(int i = 1; i <= 200; i++) {
+        int length = dis(gen);
+        string filename("trace");
+        filename += to_string(i);
+        filename += ".txt";
+        ofstream trace_file(filename.c_str());
+        for(int j = 1; j <= length; j++) {
+            num = d(gen);
+            trace_file << num;
+            trace_file << "\n";
+        }
     }
-    for(auto p : hist) {
-        std::cout  << p.first << ' ' << std::string(p.second/100, '*') << '\n';
-    }
+ 
 }
