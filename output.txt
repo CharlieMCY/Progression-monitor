@@ -1,70 +1,11 @@
-=f
-Runnning safety monitor
-a
-Result 0
-a
-Result 0
-c
-formula (T)&(X(T))
-Result 0
-a
-formula ((T)&(X(T)))&(X(X(T)))
-Result 0
-c
-formula (((T)&(X(T)))&(X(X(T))))&(X(X(X(T))))
-Result 0
-b
-formula ((((T)&(X(T)))&(X(X(T))))&(X(X(X(T)))))&(X(X(X(X(T)))))
-Result 0
-reseting petri
-Resetting
-Ante a
-a
-Rewriting formula: a on event a
- return 1 flag 1
-Pushing((((T)&(X(T)))&(X(X(T))))&(X(X(X(T)))))&(X(X(X(X(T))))) and b
-Result 0
-Result 0
-a
-Rewriting formula: b on event a
-Returning -1
- return -1 flag -1
-Rewriting formula: ((((T)&(X(T)))&(X(X(T))))&(X(X(X(T)))))&(X(X(X(X(T))))) on event a
- return 0 flag -1
-Result -1
+Formula F(a)
+Formula F(b)
+Formula F(c)
+Reading trace file: trace1.txt
 Property violated
-=f
-Runnning safety monitor
-a
-Result 0
-a
-Result 0
-c
-formula (T)&(X(T))
-Result 0
-a
-formula ((T)&(X(T)))&(X(X(T)))
-Result 0
-c
-formula (((T)&(X(T)))&(X(X(T))))&(X(X(X(T))))
-Result 0
-b
-formula ((((T)&(X(T)))&(X(X(T))))&(X(X(X(T)))))&(X(X(X(X(T)))))
-Result 0
-reseting petri
-Resetting
-Ante a
-a
-Rewriting formula: a on event a
- return 1 flag 1
-Pushing((((T)&(X(T)))&(X(X(T))))&(X(X(X(T)))))&(X(X(X(X(T))))) and b
-Result 0
-Result 0
-a
-Rewriting formula: b on event a
-Returning -1
- return -1 flag -1
-Rewriting formula: ((((T)&(X(T)))&(X(X(T))))&(X(X(X(T)))))&(X(X(X(X(T))))) on event a
- return 0 flag -1
-Result -1
-Property violated
+Number of monitors created: 3
+Maximum length of formula monitored: 0
+Number of violations: 1
+User time : 0.0s
+System time : 0.0s
+Memory : 1363968

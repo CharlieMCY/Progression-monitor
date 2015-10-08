@@ -1,0 +1,4 @@
+Formula =f
+Reading trace file: trace1.txt
+Reading trace file: trace2.txt
+Reading trace file: trace3.txt

@@ -8,7 +8,7 @@ void PetriNet::read_file() {
     ifstream input("input.txt");
     input >> num_traces;
     while(input >> formula) {
-        cout<<"Formula "<<formula<<endl;
+        output<<"Formula "<<formula<<endl;
         Monitor* new_monitor = new Monitor();
         new_monitor->set_params(formula, 0);
         petri_net.push_back(new_monitor);
@@ -20,11 +20,12 @@ void PetriNet::read_file() {
 
 void PetriNet::create_monitor() {
 
+	output.open("output.txt");
     this->read_file();
     this->final_decision = 0;
     this->run_monitor();
-    cout<<"Maximum length of formula monitored: "<<max_length<<endl;
-    cout<<"Number of violations: "<<num_violations<<endl;
+    output<<"Maximum length of formula monitored: "<<max_length<<endl;
+    output<<"Number of violations: "<<num_violations<<endl;
 
 }
 
@@ -49,11 +50,11 @@ int PetriNet::run_monitor() {
         filename += to_string(i);
         filename += ".txt";
         ifstream trace_file(filename.c_str());
-        cout<<"Reading trace file: "<<filename<<endl;
+        output<<"Reading trace file: "<<filename<<endl;
         string event;
         if(!trace_file.fail()) {
             while(trace_file >> event && !petri_net.empty()) {
-                //cout<<event<<endl;
+                //output<<event<<endl;
                 vector<Monitor*>::iterator it_mon = petri_net.begin();
                 while(it_mon != petri_net.end())
                 {
@@ -62,7 +63,7 @@ int PetriNet::run_monitor() {
                     while(current_mon != NULL) {
                         if(current_mon->decision == 0) {
                             int result = current_mon->evaluate(event);
-                            //cout<<"Result "<<result<<endl;
+                            //output<<"Result "<<result<<endl;
                             if(result == -1) {
                                 it_mon = petri_net.erase(it_mon);
                                 int index = distance(petri_net.begin(), it_mon);
@@ -80,18 +81,18 @@ int PetriNet::run_monitor() {
             }
             if(evaluate_decision() == -1) {
                 final_decision = -1;
-                cout<<"Property violated"<<endl;
+                output<<"Property violated"<<endl;
                 num_violations++;
-                cout<<"Number of monitors created: "<<count_monitors()<<endl;
+                output<<"Number of monitors created: "<<count_monitors()<<endl;
                 return 1;
             }
-            //cout<<"reseting petri"<<endl;
+            //output<<"reseting petri"<<endl;
             this->reset();
         }
     }
     final_decision = 0;
-    cout<<"Property unknown"<<endl;
-    cout<<"Number of monitors created: "<<count_monitors()<<endl;
+    output<<"Property unknown"<<endl;
+    output<<"Number of monitors created: "<<count_monitors()<<endl;
     return 1;
 }
 

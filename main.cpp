@@ -29,7 +29,8 @@ int main() {
     end = usage.ru_utime;
     start = usage.ru_stime;
     long mem = getVal();
-    cout<<"User time : "<<end.tv_sec<<"."<<end.tv_usec<<"s"<<endl;
-    cout<<"System time : "<<start.tv_sec<<"."<<start.tv_usec<<"s"<<endl;
-    cout<<"Memory : "<<mem<<endl;
+    monitor->output<<"User time : "<<end.tv_sec<<"."<<end.tv_usec<<"s"<<endl;
+    monitor->output<<"System time : "<<start.tv_sec<<"."<<start.tv_usec<<"s"<<endl;
+    monitor->output<<"Memory : "<<mem<<endl;
+	monitor->output.close();
 }

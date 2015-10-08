@@ -31,6 +31,7 @@ class PetriNet {
     std::vector<std::string> cosafety_props;
     int num_traces;
     int final_decision;
+	std::ofstream output;
 
     void create_monitor();
     int evaluate_decision();

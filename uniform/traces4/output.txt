@@ -1,0 +1,30 @@
+Formula =f
+Reading trace file: trace1.txt
+Reading trace file: trace2.txt
+Reading trace file: trace3.txt
+Reading trace file: trace4.txt
+Reading trace file: trace5.txt
+Reading trace file: trace6.txt
+Reading trace file: trace7.txt
+Reading trace file: trace8.txt
+Reading trace file: trace9.txt
+Reading trace file: trace10.txt
+Reading trace file: trace11.txt
+Reading trace file: trace12.txt
+Reading trace file: trace13.txt
+Reading trace file: trace14.txt
+Reading trace file: trace15.txt
+Reading trace file: trace16.txt
+Reading trace file: trace17.txt
+Reading trace file: trace18.txt
+Reading trace file: trace19.txt
+Reading trace file: trace20.txt
+Reading trace file: trace21.txt
+Reading trace file: trace22.txt
+Property violated
+Number of monitors created: 16
+Maximum length of formula monitored: 8
+Number of violations: 1
+User time : 0.0s
+System time : 0.4000s
+Memory : 1363968
