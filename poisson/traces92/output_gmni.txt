@@ -1,0 +1,10 @@
+Formula =f
+Reading trace file: trace1.txt
+Reading trace file: trace2.txt
+Property violated
+Number of monitors created: 2
+Maximum length of formula monitored: 7
+Number of violations: 1
+User time : 0.0s
+System time : 0.0s
+Memory : 1368064

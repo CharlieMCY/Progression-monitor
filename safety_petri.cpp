@@ -20,7 +20,7 @@ void PetriNet::read_file() {
 
 void PetriNet::create_monitor() {
 
-	output.open("output.txt");
+	output.open("output_od.txt");
     this->read_file();
     this->final_decision = 0;
     this->run_monitor();
